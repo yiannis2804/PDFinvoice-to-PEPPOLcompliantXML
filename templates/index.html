@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Invoice Processor</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://unpkg.com/lottie-web@5.7.4/build/player/lottie.min.js"></script>
+</head>
+<div id="lottie-animation" class="floating-lottie"></div>
+<div id="working-animation" class="lottie-bottom-left"></div>
+<script>
+  lottie.loadAnimation({
+    container: document.getElementById('lottie-animation'),
+    renderer: 'svg',
+    loop: true,
+    autoplay: true,
+    path: "{{ url_for('static', filename='upload.json') }}"
+  });
+  // Second animation (working.json)
+  lottie.loadAnimation({
+    container: document.getElementById('working-animation'),
+    renderer: 'svg',
+    loop: true,
+    autoplay: true,
+    path: "{{ url_for('static', filename='working.json') }}"
+  });
+
+</script>
+<body>
+  
+  <div class="container">
+    <h1>Upload Invoice PDF</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+      <input type="file" name="pdf" accept=".pdf" required />
+      <button type="submit">Process</button>
+    </form>
+
+    {% if show_fields %}
+    <h2>Enter Required Fields</h2>
+    <form action="/submit_fields" method="post">
+      <input type="text" name="buyer_reference" placeholder="Buyer Reference" required><br><br>
+      <input type="text" name="project_reference" placeholder="Project Reference"><br><br>
+      <input type="text" name="tax_exemption_reason_code" placeholder="Tax Exemption Code"><br><br>
+      <input type="text" name="tax_exemption_reason" placeholder="Tax Exemption Reason"><br><br>
+      <input type="text" name="endpoint_id" placeholder="EndPoint ID"><br><br>
+      <input type="text" name="partyidentification_id" placeholder="Party Identification"><br><br>
+      <input type="text" name="payment_means_method" placeholder="Payment Means Method"><br><br>
+      <input type="text" name="payment_means_number" placeholder="Payment Means Number"><br><br>
+      <input type="text" name="invoiced_quantity_unit_code" placeholder="Tax Category (eg. C62)"><br><br>
+      <input type="text" name="tax_category_id" placeholder="Invoiced Quantity Code (eg. K)"><br><br>
+      <input type="text" name="contract_reference" placeholder="Simvasi"><br><br>
+
+
+
+      <button type="submit">Submit Fields</button>
+    </form>
+    {% endif %}
+
+    {% if xml_ready %}
+    <form action="/generate_xml" method="post">
+      <button type="submit">Generate XML</button>
+    </form>
+    {% endif %}
+
+    {% if xml_file %}
+    <p><a href="{{ url_for('download', filename=xml_file) }}" download>Download XML</a></p>
+    {% endif %}
+  </div>
+</body>
+</html>

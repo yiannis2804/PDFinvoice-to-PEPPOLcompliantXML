@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit Line Items</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 8px; }
+    th { background-color: #f2f2f2; }
+    input[type="text"], input[type="number"] { width: 95%; padding: 4px; }
+    .actions { display: flex; gap: 10px; }
+  </style>
+</head>
+<body>
+  <div class="wide-table-container">
+    <h1>Edit Invoice Line Items</h1>
+    <form action="/update_items" method="post">
+      <table>
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="line-items-table">
+          {% for item in items %}
+          <tr>
+            <td><input type="text" name="description_{{ loop.index0 }}" value="{{ item.description }}" required></td>
+            <td><input type="number" name="quantity_{{ loop.index0 }}" value="{{ item.quantity }}" step="1" required></td>
+            <td><input type="number" name="unit_price_{{ loop.index0 }}" value="{{ item.unit_price }}" step="0.01" required></td>
+            <td><button type="button" onclick="removeRow(this)">Delete</button></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <br>
+      <button type="button" onclick="addRow()">Add Item</button>
+      <button type="submit">Save and Generate XML</button>
+    </form>
+  </div>
+
+  <script>
+    let rowCount = parseInt("{{ items|length | default(0) }}");
+
+
+    
+    function addRow() {
+      const table = document.getElementById('line-items-table');
+      const row = table.insertRow();
+
+      row.innerHTML = `
+        <td><input type="text" name="description_${rowCount}" required></td>
+        <td><input type="number" name="quantity_${rowCount}" step="1" required></td>
+        <td><input type="number" name="unit_price_${rowCount}" step="0.01" required></td>
+        <td><button type="button" onclick="removeRow(this)">Delete</button></td>
+      `;
+      rowCount++;
+    }
+
+    function removeRow(button) {
+      const row = button.closest("tr");
+      row.remove();
+    }
+  </script>
+</body>
+</html>

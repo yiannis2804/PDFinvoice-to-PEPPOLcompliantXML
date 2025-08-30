@@ -1,0 +1,5 @@
+Flask
+openai
+python-dotenv
+google-cloud-documentai
+jinja2
